@@ -1,0 +1,5 @@
+# bytecode
+__pycache__/
+
+# packaging
+*.egg-info/
