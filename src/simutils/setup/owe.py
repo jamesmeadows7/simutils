@@ -2,7 +2,7 @@ import subprocess, re, logging, shutil
 import numpy as np
 from os import PathLike
 from simutils import ureg
-from simutils.utils import write_from_template
+from simutils.setup.utils import write_from_template
 
 logger = logging.getLogger(__name__)
 
