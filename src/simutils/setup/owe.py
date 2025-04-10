@@ -285,4 +285,4 @@ def get_conc_gly(n_gly: int, box: list[float]) -> int:
     """
     box_vol = np.prod(box * ureg.nm)
     conc_gly = (n_gly / box_vol) * (GLY_MOLAR_MASS / ureg("N_A"))
-    return conc_gly.to("mg/cm^3")
+    return conc_gly.to("mg/cm^3").magnitude
