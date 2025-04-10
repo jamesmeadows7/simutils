@@ -243,3 +243,46 @@ def setup_owe_simulation(sim_dir: PathLike, template_dir: PathLike, title: str, 
     write_topol_file(sim_dir, template_dir, title, n_owe, n_gly)
     logger.info(f"Writing slurm file.")
     write_from_template(template_dir / "run.sh", sim_dir / "run.sh", {"jobname":sim_dir.name})
+
+
+def get_n_gly(conc_gly: float, box: list[float]) -> int:
+    """
+    Calculates the number of glycine molecules required to achieve a target glycine concentration for a given box size.
+    
+    Parameters
+    ----------
+    conc_gly : float
+        Target glycine concentration in mg/cm^3.
+    box : list
+        Side lengths of the simulation box [a, b, c] in nm.
+
+    Returns
+    -------
+    n_gly : int
+        Number of glycine molecules.
+    """
+    conc_gly = conc_gly * ureg("mg/cm^3")
+    box_vol = np.prod(box * ureg.nm)
+    n_gly = conc_gly * box_vol * ureg("N_A") / GLY_MOLAR_MASS
+    return int(n_gly.to_base_units())
+
+
+def get_conc_gly(n_gly: int, box: list[float]) -> int:
+    """
+    Calculates the glycine concentration in mg/cm^3.
+    
+    Parameters
+    ----------
+    n_gly : int
+        Number of glycine molecules.
+    box : list
+        Side lengths of the simulation box [a, b, c] in nm.
+
+    Returns
+    -------
+    conc_gly : float
+        Glycine concentration in mg/cm^3.
+    """
+    box_vol = np.prod(box * ureg.nm)
+    conc_gly = (n_gly / box_vol) * (GLY_MOLAR_MASS / ureg("N_A"))
+    return conc_gly.to("mg/cm^3")
