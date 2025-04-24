@@ -1,6 +1,7 @@
 import numpy as np
 from MDAnalysis.analysis.base import AnalysisBase
 from MDAnalysis.lib.distances import capped_distance
+from MDAnalysis.analysis.results import ResultsGroup
 
 class RDF(AnalysisBase):
     """
@@ -33,6 +34,12 @@ class RDF(AnalysisBase):
         Raw histrogram counts.
     """
 
+    _analysis_algorithm_is_parallelizable = True
+
+    @classmethod
+    def get_supported_backends(cls):
+        return ("serial", "multiprocessing", "dask")
+    
     def __init__(
         self,
         ag1,
@@ -54,9 +61,6 @@ class RDF(AnalysisBase):
         self.results.count = count
         self.results.edges = edges
         self.results.bins = 0.5 * (edges[:-1] + edges[1:])
-
-        if self._norm == "rdf":
-            self._volume_cum = 0.0 # cumulative volume
 
         self._maxrange = self._rdf_settings["range"][1] # max range
 
@@ -82,7 +86,18 @@ class RDF(AnalysisBase):
         self.results.count += count
 
         if self._norm == "rdf":
-            self._volume_cum += self._ts.volume
+            self.results._volume = self._ts.volume
+
+    def _get_aggregator(self):
+        return ResultsGroup(
+            lookup={
+                "edges":ResultsGroup.ndarray_mean,
+                "bins":ResultsGroup.ndarray_mean,
+                "rdf":ResultsGroup.ndarray_sum,
+                "count":ResultsGroup.ndarray_sum,
+                "_volume":ResultsGroup.float_mean
+            }
+        )
 
     def _conclude(self):
         norm = self.n_frames
@@ -96,7 +111,7 @@ class RDF(AnalysisBase):
             N = N_1 * N_2 # should be N(N-1) for same atom groups
 
             # average number density
-            box_vol = self._volume_cum / self.n_frames
+            box_vol = self.results._volume
             norm *= N / box_vol
 
         self.results.rdf = self.results.count / norm
