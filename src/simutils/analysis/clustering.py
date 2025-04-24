@@ -29,8 +29,10 @@ class ClusterAnalysis(AnalysisBase):
         Weighted average cluster size per frame.
     results.max_clust : ndarray
         Size of the largest cluster per frame.
+    results.edges : ndarray
+        Histogram bin edges.
     results.bins : ndarray
-        Size distribution histogram bins.
+        Histogram bin centres.
     results.size_dist : ndarray
         Average cluster size distribution.
     """
@@ -54,12 +56,13 @@ class ClusterAnalysis(AnalysisBase):
         self.results.avg_clust = np.zeros(self.n_frames)
         self.results.w_avg_clust = np.zeros(self.n_frames)
         self.results.max_clust = np.zeros(self.n_frames)
-        _, bins = np.histogram([-1], bins=self._n_bins, range=(0, self._n_residues)) # empty histogram
-        self.results.bins = bins
+        _, edges = np.histogram([-1], bins=self._n_bins, range=(0, self._n_residues)) # empty histogram
+        self.results.edges = edges
+        self.results.bins = 0.5 * (edges[:-1] + edges[1:])
         self.results.size_dist = np.zeros(self._n_bins)
 
     def _single_frame(self):
-        coms = self._ag.center_of_mass(unwrap=True, compound='residues')
+        coms = self._ag.center_of_mass(unwrap=True, compound="residues")
         pairs = self_capped_distance(coms, self._cutoff, box=self._ts.dimensions, return_distances=False)
         G = nx.Graph()
         G.add_nodes_from(range(self._n_residues))
@@ -79,6 +82,7 @@ class ClusterAnalysis(AnalysisBase):
                     "avg_clust":ResultsGroup.ndarray_hstack,
                     "w_avg_clust":ResultsGroup.ndarray_hstack,
                     "max_clust":ResultsGroup.ndarray_hstack,
+                    "edges":ResultsGroup.ndarray_mean,
                     "bins":ResultsGroup.ndarray_mean,
                     "size_dist":ResultsGroup.ndarray_sum,
             }
@@ -90,5 +94,6 @@ class ClusterAnalysis(AnalysisBase):
             self.results.avg_clust /= self._n_residues
             self.results.w_avg_clust /= self._n_residues
             self.results.max_clust /= self._n_residues
+            self.results.edges /= self._n_residues
             self.results.bins /= self._n_residues
         self.results.size_dist /= (self.n_frames * self._n_residues)
