@@ -237,10 +237,8 @@ def setup_owe_simulation(sim_dir: PathLike, template_dir: PathLike, title: str, 
     logger.info(f"Creating system with {n_mols} molecules and {n_atoms} atoms.")
     create_simulation_box(sim_dir, template_dir, title, n_owe, n_gly, box, scale)
     logger.info(f"Copying mdp files.")
-    shutil.copy(template_dir / "min.mdp", sim_dir / "min.mdp")
-    shutil.copy(template_dir / "nvt.mdp", sim_dir / "nvt.mdp")
-    shutil.copy(template_dir / "npt.mdp", sim_dir / "npt.mdp")
-    shutil.copy(template_dir / "md.mdp", sim_dir / "md.mdp")
+    for mdp_file in template_dir.glob("*.mdp"):
+        shutil.copy(mdp_file, sim_dir)
     logger.info(f"Writing topol file.")
     write_topol_file(sim_dir, template_dir, title, n_owe, n_gly)
     logger.info(f"Writing slurm file.")
