@@ -197,16 +197,16 @@ def write_topol_file(sim_dir: PathLike, template_dir: PathLike, title: str, n_ow
     molecules = ""
     n_oct, n_wat, n_eth = n_owe
     if n_gly != 0:
-        includes += "\n#include \"opls/glycine/opls2020_cm1a.itp\""
+        includes += "\n#include \"stf/glycine.itp\""
         molecules += f"{"GCN":^13}{n_gly:^9}\n"
     if n_oct != 0:
-        includes += "\n#include \"opls/octanol/opls2020.itp\""
+        includes += "\n#include \"stf/octanol.itp\""
         molecules += f"{"OCT":^13}{n_oct:^9}\n"
     if n_eth != 0:
-        includes += "\n#include \"opls/ethanol/opls2020.itp\""
+        includes += "\n#include \"stf/ethanol.itp\""
         molecules += f"{"ETH":^13}{n_eth:^9}\n"
     if n_wat != 0:
-        includes += "\n#include \"opls/water/tip4p2005.itp\""
+        includes += "\n#include \"stf/water.itp\""
         molecules += f"{"SOL":^13}{n_wat:^9}\n"
     write_from_template(template_dir / "topol.top", sim_dir / "topol.top", {"includes":includes, "title":title, "molecules":molecules})
 
