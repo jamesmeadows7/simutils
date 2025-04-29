@@ -134,7 +134,7 @@ def solvate(box_gro: PathLike, sol_gro: PathLike, n_sol: int) -> None:
     assert n_ins == n_sol
 
 
-def create_simulation_box(sim_dir: PathLike, template_dir: PathLike, title: str, n_owe: list, n_gly: int, box: list, scale: float) -> None:
+def create_simulation_box(sim_dir: PathLike, template_dir: PathLike, title: str, n_owe: list, n_gly: int, box: list, scale: list | float) -> None:
     """
     Creates simulation box containing octanol, water, ethanol and glycine molecules.
 
@@ -152,10 +152,12 @@ def create_simulation_box(sim_dir: PathLike, template_dir: PathLike, title: str,
         Number of glycine molecules.
     box : list
         Side lengths of the simulation box [a, b, c] in nm.
-    scale : float
-        Factor by which to scale the box side lengths to ensure all molecules can be inserted. 
+    scale : float or list
+        Factor(s) by which to scale the box side lengths to ensure all molecules can be inserted. 
     """
-    scaled_box = [scale*i for i in box]
+    if type(scale) != list:
+        scale = [scale, scale, scale]
+    scaled_box = [s*x for s, x in zip(scale, box)]
     create_empty_box(sim_dir / "box.gro", title, scaled_box)
     n_oct, n_wat, n_eth = n_owe
     if n_gly != 0:
@@ -209,7 +211,7 @@ def write_topol_file(sim_dir: PathLike, template_dir: PathLike, title: str, n_ow
     write_from_template(template_dir / "topol.top", sim_dir / "topol.top", {"includes":includes, "title":title, "molecules":molecules})
 
 
-def setup_owe_simulation(sim_dir: PathLike, template_dir: PathLike, title: str, n_owe: list, n_gly: int, box: list, scale: float = 1.1) -> None:
+def setup_owe_simulation(sim_dir: PathLike, template_dir: PathLike, title: str, n_owe: list, n_gly: int, box: list, scale: list | float = 1.1) -> None:
     """
     Sets up OWE simulation directory with gro file, topol file and mdp files.
 
@@ -227,8 +229,8 @@ def setup_owe_simulation(sim_dir: PathLike, template_dir: PathLike, title: str, 
         Number of glycine molecules.
     box : list
         Side lengths of the simulation box [a, b, c] in nm.
-    scale : float
-        Factor by which to scale the box side lengths to ensure all molecules can be inserted (default = 1.1). 
+    scale : float or list
+        Factor(s) by which to scale the box side lengths to ensure all molecules can be inserted (default = 1.1). 
     """
     sim_dir.mkdir(parents=True, exist_ok=True)
     n_mols, n_atoms = get_system_size(n_owe, n_gly)
