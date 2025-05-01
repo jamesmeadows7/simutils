@@ -55,7 +55,7 @@ class MSD(AnalysisBase):
 
     def _prepare(self):
         self.results.msds_by_particle = np.zeros((self.n_frames, self._n_residues))
-        self.results._position_array = np.zeros((self.n_frames, self._n_residues, self._dim_fac))
+        self.results._position_array = np.zeros((self.n_frames, self._n_residues, self.dim_fac))
 
     def _single_frame(self):
         # don't need to unwrap coms because we use NoJump
