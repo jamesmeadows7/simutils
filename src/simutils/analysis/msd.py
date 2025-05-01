@@ -51,7 +51,7 @@ class MSD(AnalysisBase):
             self._dim = keys[self._msd_type]
         except KeyError:
             raise ValueError("Invalid msd type.")
-        self._dim_fac = len(self._dim)
+        self.dim_fac = len(self._dim)
 
     def _prepare(self):
         self.results.msds_by_particle = np.zeros((self.n_frames, self._n_residues))
