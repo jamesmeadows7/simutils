@@ -176,4 +176,4 @@ def compute_viscosity_tensor(tau: np.ndarray, acf_tensor: np.ndarray, vol: float
     logger.info(f"Computing viscosities.")
     integral = cumulative_trapezoid(acf_tensor, tau, axis=0) * ureg("bar^2*ps")
     eta_tensor = (vol / (ureg("k_B") * temp * ureg("K"))) * integral
-    return eta_tensor.to("mPa*s")
+    return eta_tensor.to("mPa*s").magnitude
