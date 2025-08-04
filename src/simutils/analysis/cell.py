@@ -16,13 +16,13 @@ class CellParameters(AnalysisBase):
     Attributes
     ----------
     results.cell_matrices : ndarray
-        Nx3x3 array of cell matrices.
+        Nx3x3 array of cell matrices. Components in Å.
     results.cell_parameters : ndarray
-        Nx6 array of cell parameters: a, b, c, alpha, beta, gamma.
+        Nx6 array of cell parameters: a, b, c, alpha, beta, gamma. Lengths in Å.
     results.avg_cell_matrix : ndarray
-        3x3 array of average cell matrix values.
+        3x3 array of average cell matrix values. Components in Å.
     results.avg_cell_parameters : ndarray
-        Average cell parameters: a, b, c, alpha, beta, gamma.
+        Average cell parameters: a, b, c, alpha, beta, gamma. Lengths in Å.
     """
 
     def __init__(self, u, corrected=True):
