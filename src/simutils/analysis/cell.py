@@ -96,12 +96,13 @@ def continuous_cell_matrices(H_trajectory):
         # unwrap b_x
         shift = np.round((H[1, 0] - H_prev[1, 0]) / H[0, 0])
         H[1, 0] -= shift * H[0, 0] 
+        # unwrap c_y (could affect c_x also)
+        shift = np.round((H[2, 1] - H_prev[2, 1]) / H[1, 1])
+        H[2, 0] -= shift * H[1, 0]
+        H[2, 1] -= shift * H[1, 1] 
         # unwrap c_x
         shift = np.round((H[2, 0] - H_prev[2, 0]) / H[0, 0])
         H[2, 0] -= shift * H[0, 0] 
-        # unwrap c_y
-        shift = np.round((H[2, 1] - H_prev[2, 1]) / H[1, 1])
-        H[2, 1] -= shift * H[1, 1] 
         continuous_H_trajectory[i] = H
     return continuous_H_trajectory
 
