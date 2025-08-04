@@ -1,4 +1,55 @@
 import numpy as np
+from MDAnalysis.analysis.base import AnalysisBase
+
+
+class CellParameters(AnalysisBase):
+    """
+    Compute cell parameters.
+
+    Parameters
+    ----------
+    u : Universe
+        Universe for MSD analysis.
+    corrected : bool, optional
+        Account for GROMACS triclinic box constraints (default = true).
+
+    Attributes
+    ----------
+    results.cell_matrices : ndarray
+        Nx3x3 array of cell matrices.
+    results.cell_parameters : ndarray
+        Nx6 array of cell parameters: a, b, c, alpha, beta, gamma.
+    results.avg_cell_matrix : ndarray
+        3x3 array of average cell matrix values.
+    results.avg_cell_parameters : ndarray
+        Average cell parameters: a, b, c, alpha, beta, gamma.
+    """
+
+    def __init__(self, u, corrected=True):
+        super(CellParameters, self).__init__(u.trajectory)
+        self._u = u
+        self._corrected = corrected
+
+    def _prepare(self):
+        self.results.cell_matrices = np.zeros((self.n_frames, 3, 3))
+
+    def _single_frame(self):
+        self.results.cell_matrices[self._frame_index] = self._ts.triclinic_dimensions
+
+    def _conclude(self):
+        if self._corrected:
+            self.results.cell_matrices = continuous_cell_matrices(self.results.cell_matrices)
+
+        self.results.cell_parameters = np.zeros((self.n_frames, 6))
+        for i in range(self.n_frames):
+            self.results.cell_parameters[i] = calculate_cell_parameters(self.results.cell_matrices[i])
+
+        self.results.avg_cell_matrix = self.results.cell_matrices.mean(axis=0)
+        if self._corrected:
+            self.results.avg_cell_matrix = correct_cell_matrix(self.results.avg_cell_matrix)
+
+        self.results.avg_cell_parameters = calculate_cell_parameters(self.results.avg_cell_matrix)
+
 
 def calculate_cell_parameters(H):
     """
@@ -22,6 +73,7 @@ def calculate_cell_parameters(H):
     beta  = np.degrees(np.arccos(np.dot(a_vec, c_vec) / (a * c)))
     gamma = np.degrees(np.arccos(np.dot(a_vec, b_vec) / (a * b)))
     return np.array([a, b, c, alpha, beta, gamma])
+
 
 def continuous_cell_matrices(H_trajectory):
     """
@@ -52,6 +104,7 @@ def continuous_cell_matrices(H_trajectory):
         H[2, 1] -= shift * H[1, 1] 
         continuous_H_trajectory[i] = H
     return continuous_H_trajectory
+
 
 def correct_cell_matrix(H):
     """
