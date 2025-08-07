@@ -15,7 +15,7 @@ COLOR_CYCLES = {
     "stf":{"red":"#C31014", "green":"#74AA89", "blue":"#4464AD", "yellow":"#FEC12C"},
 }
 
-def set_plot_style(layout="double", aspect_ratio=4/3, figsize=None, color_cycle="tol_vibrant", base_font=12, scale=False):
+def set_plot_style(layout=None, aspect_ratio=4/3, figsize=None, color_cycle="tol_vibrant", base_font=12, scale=False):
     """
     Set a standard matplotlib plot style.
 
