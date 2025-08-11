@@ -13,3 +13,7 @@ DEFAULTS = {
 BETA_ZX = {"alpha":"1e-5", "beta":"1e-5", "gamma":"0.0"}
 
 Z = {"alpha": 4, "beta": 2, "gamma": 3}
+
+WATER_MODELS = ["tip3p", "tip4p", "tip4p2005"]
+
+TEMPS = [298.15, 318.15] # K
