@@ -76,5 +76,5 @@ def plot_blocking_analysis(blocking_df: pd.DataFrame, units: str, sem: float = N
     if sem is not None:
         ax.axhline(sem, color="tab:red", zorder=3)
     ax.set_xlabel("Blocking Operations")
-    ax.set_ylabel(f"σ_m [{units}]")
+    ax.set_ylabel(f"σ_m / {units}")
     return fig, ax
