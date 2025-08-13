@@ -1,5 +1,5 @@
 FORCE_FIELDS = {
-    "opls":["chelpg_chelpg", "chelpg_cm1a", "ligpargen_chelpg", "ligpargen_cm1a", "opls2020_basic", "opls2020_chelpg", "opls2020_cm1a", "opls2020_cndo", "opls_basic", "opls_chelpg", "opls_cm1a", "opls_cndo"],
+    "opls":["ligpargen_chelpg", "ligpargen_cm1a", "opls2020_basic", "opls2020_chelpg", "opls2020_cm1a", "opls2020_cndo", "opls_basic", "opls_chelpg", "opls_cm1a", "opls_cndo"],
     "gaff":["gaff2_abcg2", "gaff2_cndo", "gaff2_dnp", "gaff2_resp", "gaff_bcc", "gaff_cndo", "gaff_dnp", "gaff_resp"],
 }
 
