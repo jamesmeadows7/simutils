@@ -89,3 +89,20 @@ def calculate_cell_parameters(H):
     beta  = np.degrees(np.arccos(np.dot(a_vec, c_vec) / (a * c)))
     gamma = np.degrees(np.arccos(np.dot(a_vec, b_vec) / (a * b)))
     return np.array([a, b, c, alpha, beta, gamma])
+
+
+def box_volume(H):
+    """
+    Calculate box volume from cell matrix.
+
+    Parameters
+    ----------
+    H : ndarray
+        3x3 cell matrix, rows correspond to box vectors a, b, c. H[1, 0] = b_x.
+        
+    Returns
+    -------
+    box_volume : float
+        Box volume.
+    """
+    return np.abs(np.linalg.det(H))
