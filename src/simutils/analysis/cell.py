@@ -35,6 +35,10 @@ class CellParameters(AnalysisBase):
     ----------
     u : Universe
         Universe for MSD analysis.
+    tau_min : float, optional
+        Start time for averaging in ps (default = first frame time).
+    tau_max : float, optional
+        End time for averaging in ps (default = last frame time).
 
     Attributes
     ----------
@@ -48,9 +52,11 @@ class CellParameters(AnalysisBase):
         Cell parameters of the average cell matrix. Lengths in Å. Angles in degrees.
     """
 
-    def __init__(self, u):
+    def __init__(self, u, t_min=None, t_max=None):
         super(CellParameters, self).__init__(u.trajectory)
         self._u = u
+        self._t_min = t_min
+        self._t_max = t_max
 
     def _prepare(self):
         self.results.cell_matrices = np.zeros((self.n_frames, 3, 3))
@@ -63,7 +69,16 @@ class CellParameters(AnalysisBase):
         for i in range(self.n_frames):
             self.results.cell_parameters[i] = calculate_cell_parameters(self.results.cell_matrices[i])
 
-        self.results.avg_cell_matrix = self.results.cell_matrices.mean(axis=0)
+        times = self.times
+
+        if self._t_min is None:
+            self._t_min = times[0]
+        if self._t_max is None:
+            self._t_max = times[-1]
+
+        mask = (times >= self._t_min) & (times <= self._t_max)
+
+        self.results.avg_cell_matrix = self.results.cell_matrices[mask].mean(axis=0)
         self.results.avg_cell_parameters = calculate_cell_parameters(self.results.avg_cell_matrix)
 
 
