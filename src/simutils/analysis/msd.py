@@ -2,6 +2,7 @@ import numpy as np
 from tqdm import tqdm
 from MDAnalysis.analysis.base import AnalysisBase
 from MDAnalysis.transformations.nojump import NoJump
+from scipy.stats import linregress
 
 class MSD(AnalysisBase):
     """
@@ -87,3 +88,34 @@ class MSD(AnalysisBase):
         for n in tqdm(range(self._n_residues)):
             self.results.msds_by_particle[:, n] = tidynamics.msd(positions[:, n, :])
         self.results.timeseries = self.results.msds_by_particle.mean(axis=1)
+
+    def compute_diff_coeffs(self, tau_min=None, tau_max=None):
+        """
+        Compute diffusion coefficient for each indvidual residue.
+
+        Parameters
+        ----------
+        tau_min : float, optional
+            Start time for linear fit in ps (default = first frame time).
+        tau_max : float, optional
+            End time for linear fit in ps (default = last frame time).
+
+        Attributes
+        ----------
+        diff_coeffs : ndarray
+            Diffusion coefficients for each residue in Å²/ps.
+        """
+        times = self.times
+
+        if tau_min is None:
+            tau_min = times[0]
+        if tau_max is None:
+            tau_max = times[-1]
+
+        mask = (times >= tau_min) & (times <= tau_max)
+
+        diff_coeffs = np.zeros(self._n_residues)
+        for i in range(self._n_residues):
+            lin = linregress(times[mask], self.results.msds_by_particle[mask, i])
+            diff_coeffs[i] = lin.slope / (2*self.dim_fac)
+        return diff_coeffs
