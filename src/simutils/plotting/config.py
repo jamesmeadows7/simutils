@@ -75,6 +75,9 @@ def set_plot_style(layout=None, aspect_ratio=4/3, figsize=None, color_cycle="tol
     else:
         scale = 1.0
 
+    # backend
+    mpl.rcParams["backend"] = "Agg"
+
     # lines
     mpl.rcParams["lines.linewidth"] = 1.5 * scale
     mpl.rcParams["lines.markersize"] = 6 * scale
