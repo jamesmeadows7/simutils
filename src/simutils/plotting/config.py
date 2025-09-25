@@ -21,6 +21,7 @@ NAMES = {
     "opls_chelpg":"opls-chpg",
     "opls_cm1a":"opls-cm1a",
     "opls_cndo":"opls-cndo",
+    "opls2020_mocl_98":"bayes-opt"
 }
 
 COL_WIDTHS = {
