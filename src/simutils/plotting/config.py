@@ -52,7 +52,7 @@ def set_plot_style(layout=None, aspect_ratio=4/3, figsize=None, color_cycle="tol
     color_cycle : str, optional
         "default", "tol_bright", "tol_vibrant", "tol_light", "stf". Defaults to "tol_vibrant".
     base_font : float, optional
-        Vase font size (default = 12).
+        Base font size (default = 12).
     scale : bool, optional
         Scale fonts and linewidth with figsize (default = False).
     """
