@@ -78,13 +78,14 @@ class ClusterAnalysis(AnalysisBase):
 
     def _get_aggregator(self):
         return ResultsGroup(
-            lookup={"n_clust":ResultsGroup.ndarray_hstack,
-                    "avg_clust":ResultsGroup.ndarray_hstack,
-                    "w_avg_clust":ResultsGroup.ndarray_hstack,
-                    "max_clust":ResultsGroup.ndarray_hstack,
-                    "edges":ResultsGroup.ndarray_mean,
-                    "bins":ResultsGroup.ndarray_mean,
-                    "size_dist":ResultsGroup.ndarray_sum,
+            lookup={
+                "n_clust":ResultsGroup.ndarray_hstack,
+                "avg_clust":ResultsGroup.ndarray_hstack,
+                "w_avg_clust":ResultsGroup.ndarray_hstack,
+                "max_clust":ResultsGroup.ndarray_hstack,
+                "edges":ResultsGroup.ndarray_mean,
+                "bins":ResultsGroup.ndarray_mean,
+                "size_dist":ResultsGroup.ndarray_sum,
             }
         )
     
