@@ -56,7 +56,7 @@ def get_pressure_tensor(edr_file: PathLike) -> tuple[np.ndarray, np.ndarray]:
 
 def transform_pressure_tensor(p_tensor: np.ndarray) -> np.ndarray:
     """
-    Reads pressure tensor from edr file.
+    Symmetrises pressure tensor and subtracts pressure form diagonal.
 
     Parameters
     ----------
@@ -66,12 +66,10 @@ def transform_pressure_tensor(p_tensor: np.ndarray) -> np.ndarray:
     Returns
     -------
     p_tensor : ndarray
-        N x 3 x 3 pressure tensor in bar.
+        N x 3 x 3 transformed pressure tensor in bar.
     """
     logger.info(f"Transforming pressure tensor.")
-    # symmetrise pressure tensor
     p_tensor = (p_tensor + np.transpose(p_tensor, axes=(0, 2, 1))) / 2
-    # subtract pressure from diagonal
     p = np.trace(p_tensor, axis1=1, axis2=2) / 3.0
     p_tensor = p_tensor - (p[:, None, None] * np.eye(3)[None, :, :])
     return p_tensor
