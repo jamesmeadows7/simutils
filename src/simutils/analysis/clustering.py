@@ -1,4 +1,5 @@
 import numpy as np
+import string
 import networkx as nx
 from MDAnalysis.analysis.base import AnalysisBase
 from MDAnalysis.analysis.results import ResultsGroup
@@ -324,8 +325,11 @@ class VisualiseClusters(AnalysisBase):
         for cluster_number, cluster in enumerate(sorted_clusters):
             for residue in cluster:
                 res_to_cluster[residue + 1] = cluster_number + 1
-        new_resnums = [res_to_cluster.get(i, -1) for i in self._ag.residues.resids]
-        self._ag.residues.resids = new_resnums
+        new_resnames = [
+            cluster_to_resname(res_to_cluster[i]) if i in res_to_cluster else "UNK"
+            for i in self._ag.residues.resids
+        ]
+        self._ag.residues.resnames = new_resnames
 
         self._writer.write(self._ag.atoms)
 
@@ -347,3 +351,8 @@ def cluster_com_pbc(residues, box):
     com = np.sum(unwrapped * masses[:, None], axis=0) / total_mass
     com = apply_PBC(com.reshape(1, 3), box)[0]
     return com
+
+
+def cluster_to_resname(cluster_number, repeat=3):
+    letter = string.ascii_uppercase[cluster_number - 1]
+    return letter * repeat
