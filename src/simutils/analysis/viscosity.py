@@ -3,6 +3,7 @@ import logging
 import panedr
 import scipy.signal as signal
 from scipy.integrate import cumulative_trapezoid
+from scipy.optimize import curve_fit
 import tidynamics
 from simutils import ureg
 from os import PathLike
@@ -175,3 +176,11 @@ def compute_viscosity_tensor(tau: np.ndarray, acf_tensor: np.ndarray, vol: float
     integral = cumulative_trapezoid(acf_tensor, tau, axis=0) * ureg("bar^2*ps")
     eta_tensor = (vol / (ureg("k_B") * temp * ureg("K"))) * integral
     return eta_tensor.to("mPa*s").magnitude
+
+
+def double_exp(x, A, alpha, tau1, tau2):
+    return A * alpha * tau1 * (1 - np.exp(-x/tau1)) + A * (1 - alpha) * tau2 * (1 - np.exp(-x/tau2))
+
+
+def power_law(x, A, b):
+    return A*np.power(x, b)
