@@ -57,7 +57,7 @@ def get_pressure_tensor(edr_file: PathLike) -> tuple[np.ndarray, np.ndarray]:
 
 def transform_pressure_tensor(p_tensor: np.ndarray) -> np.ndarray:
     """
-    Symmetrises pressure tensor and subtracts pressure form diagonal.
+    Symmetrises pressure tensor and subtracts pressure from diagonal.
 
     Parameters
     ----------
@@ -137,7 +137,7 @@ def compute_autocorrelation(t: np.ndarray, p_tensor: np.ndarray, max_tau: float,
     acf_tensor : ndarray
         N x 3 x 3 tensor of pressure autocorrelations.
     """
-    logger.info(f"Computing autoorrelation for each pressure tensor component.")
+    logger.info(f"Computing autocorrelation for each pressure tensor component.")
     idx = np.argmin((np.abs(t-max_tau)))
     tau = t[:idx]
     acf_tensor = np.zeros((len(tau), 3, 3))
