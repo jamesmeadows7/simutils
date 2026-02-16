@@ -119,3 +119,31 @@ class MSD(AnalysisBase):
             lin = linregress(times[mask], self.results.msds_by_particle[mask, i])
             diff_coeffs[i] = lin.slope / (2*self.dim_fac)
         return diff_coeffs
+    
+    def compute_diff_coefficent(self, tau_min=None, tau_max=None):
+        """
+        Compute diffusion coefficient from the molecule-averaged MSD.
+
+        Parameters
+        ----------
+        tau_min : float, optional
+            Start time for linear fit in ps (default = first frame time).
+        tau_max : float, optional
+            End time for linear fit in ps (default = last frame time).
+
+        Attributes
+        ----------
+        diff_coeff : float
+            Diffusion coefficient in Å²/ps.
+        """
+        times = self.times
+
+        if tau_min is None:
+            tau_min = times[0]
+        if tau_max is None:
+            tau_max = times[-1]
+
+        mask = (times >= tau_min) & (times <= tau_max)
+        lin = linregress(times[mask], self.results.timeseries[mask])
+        diff_coeff = lin.slope / (2*self.dim_fac)
+        return diff_coeff
