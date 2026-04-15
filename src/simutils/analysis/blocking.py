@@ -1,3 +1,5 @@
+"""Tools for performing an automated blocking analysis on fluctuating timeseries."""
+
 import numpy as np
 import pandas as pd
 import logging

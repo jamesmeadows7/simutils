@@ -1,3 +1,5 @@
+"""Tools for setting up coarse-grained simulations of ocanol/water/ethanol mixtures."""
+
 import subprocess, re, logging, shutil
 import numpy as np
 from os import PathLike

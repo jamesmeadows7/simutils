@@ -1,3 +1,5 @@
+"""Tools fot identifying molecular clusters."""
+
 import numpy as np
 import string
 import networkx as nx
@@ -356,3 +358,39 @@ def cluster_com_pbc(residues, box):
 def cluster_to_resname(cluster_number, repeat=3):
     letter = string.ascii_uppercase[cluster_number - 1]
     return letter * repeat
+
+
+class ClusterProperties(AnalysisBase):
+    """
+    Compute cluster properties per frame.
+    """
+    
+    def __init__(self, ag, cutoff):
+        super().__init__(ag.universe.trajectory)
+        self._ag = ag
+        self._cutoff = cutoff
+
+    def _prepare(self):
+        self.results.size = []
+        self.results.rg = []
+        self.results.asphericity = []
+
+    def _single_frame(self):
+        coms = self._ag.center_of_mass(unwrap=True, compound="residues")
+        pairs = self_capped_distance(coms, self._cutoff, box=self._ts.dimensions, return_distances=False)
+        G = nx.Graph()
+        G.add_nodes_from(range(self._ag.n_residues))
+        G.add_edges_from(pairs)
+        clusters = list(nx.connected_components(G))
+
+        for cluster in clusters:
+            self.results.size.append(len(cluster))
+            residues = self._ag.residues[list(cluster)]
+            atoms = residues.atoms
+            self.results.rg.append(atoms.radius_of_gyration())
+            self.results.asphericity.append(atoms.asphericity())
+
+    def _conclude(self):
+        self.results.size = np.array(self.results.size)
+        self.results.rg = np.array(self.results.rg)
+        self.results.asphericity = np.array(self.results.asphericity)

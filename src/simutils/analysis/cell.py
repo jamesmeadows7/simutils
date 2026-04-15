@@ -1,3 +1,5 @@
+"""Tools for computing average cell dimensions, allowing for GROMACS skew corrections."""
+
 import numpy as np
 from MDAnalysis.analysis.base import AnalysisBase
 from MDAnalysis.transformations.base import TransformationBase

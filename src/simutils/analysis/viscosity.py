@@ -1,3 +1,5 @@
+"Tools for computing the viscosity of a fluid."
+
 import numpy as np
 import logging
 import panedr

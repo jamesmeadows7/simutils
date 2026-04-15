@@ -1,3 +1,5 @@
+"""Tools for computing the symmetry of a crystal supercell."""
+
 from MDAnalysis.analysis.base import AnalysisBase
 import numpy as np
 import spglib as spg

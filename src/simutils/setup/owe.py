@@ -1,3 +1,5 @@
+"""Tools for setting up simulations of glycine in ocanol/water/ethanol mixtures."""
+
 import subprocess, re, logging, shutil
 import numpy as np
 from os import PathLike

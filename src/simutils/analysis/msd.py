@@ -1,3 +1,5 @@
+"""Tools for computing mean-squared displacement and deriving diffusion coefficients."""
+
 import numpy as np
 from tqdm import tqdm
 from MDAnalysis.analysis.base import AnalysisBase

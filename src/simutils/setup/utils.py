@@ -1,3 +1,5 @@
+"""Utility functions for simulation set up."""
+
 from os import PathLike
 from string import Template
 import subprocess
@@ -24,7 +26,7 @@ def write_from_template(template: PathLike, output: PathLike, substitutions: dic
 
 def replicate_unitcell(unitcell: PathLike, supercell: PathLike, n_replicas: list) -> None:
     """
-    Replaces $-identifiers in template file with values in substitution dictionary and writes to output file.
+    Replicate unit cell to form a larger supercell.
 
     Parameters
     __________

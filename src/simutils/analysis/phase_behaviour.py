@@ -1,3 +1,5 @@
+"Tools fot identifying different phases of the OWE ternary system."
+
 import numpy as np
 from simutils import ureg
 from MDAnalysis.analysis.base import AnalysisBase

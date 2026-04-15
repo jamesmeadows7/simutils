@@ -1,3 +1,5 @@
+"""Plot configuration to maintain a consistent visualisations."""
+
 import matplotlib as mpl
 from cycler import cycler
 

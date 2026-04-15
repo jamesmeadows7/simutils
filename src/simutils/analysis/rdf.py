@@ -1,3 +1,5 @@
+"""Tools for computing radial distribution functions."""
+
 import numpy as np
 from MDAnalysis.analysis.base import AnalysisBase
 from MDAnalysis.lib.distances import capped_distance

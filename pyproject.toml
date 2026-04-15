@@ -5,3 +5,18 @@ build-backend = "hatchling.build"
 [project]
 name = "simutils"
 version = "0.1.0"
+dependencies = [
+    "cycler>=0.12.1",
+    "matplotlib>=3.10.8",
+    "MDAnalysis>=2.10.0",
+    "networkx>=3.4.2",
+    "numpy>=2.4.4",
+    "pandas>=3.0.2",
+    "panedr>=0.8.0",
+    "Pint>=0.24.4",
+    "scikit_learn>=1.8.0",
+    "scipy>=1.17.1",
+    "spglib>=2.7.0",
+    "tidynamics>=1.1.2",
+    "tqdm>=4.67.1",
+]

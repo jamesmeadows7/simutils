@@ -1,3 +1,5 @@
+"""Alternative labels for the tested force fields."""
+
 NAMES = {
     "gaff2_abcg2":"gaff2-abcg",
     "gaff2_cndo":"gaff2-cndo",
