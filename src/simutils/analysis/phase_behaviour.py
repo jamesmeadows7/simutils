@@ -9,15 +9,16 @@ from sklearn.metrics import silhouette_score
 
 
 TWO_PHASE = [
-    [0.00, 0.29, 0.36, 0.37, 0.36, 0.34, 0.31, 0.25, 0.18, 0.11, 0.05, 0.00], # ethanol
-    [1.00, 0.72, 0.55, 0.43, 0.33, 0.25, 0.19, 0.15, 0.12, 0.08, 0.05, 0.05], # water
-    [0.00, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95], # octanol
+    [0.00, 0.29, 0.36, 0.37, 0.36, 0.34, 0.31, 0.25, 0.18, 0.11, 0.05, 0.00],  # ethanol
+    [1.00, 0.72, 0.55, 0.43, 0.33, 0.25, 0.19, 0.15, 0.12, 0.08, 0.05, 0.05],  # water
+    [0.00, 0.00, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.95],  # octanol
 ]
+
 
 def get_mass_density(ag, n_bins, range=None, dim="z"):
     """
     Calculates mass density across one dimension of the simulation box.
-    
+
     Parameters
     ----------
     ag : AtomGroup
@@ -36,24 +37,21 @@ def get_mass_density(ag, n_bins, range=None, dim="z"):
     edges : ndarray
         Bin edges in Å.
     """
-    dim_idx = {"x":0, "y":1, "z":2}
+    dim_idx = {"x": 0, "y": 1, "z": 2}
     d = dim_idx[dim]
-    masses = ag.total_mass(compound="residues") # g mol-1
+    masses = ag.total_mass(compound="residues")  # g mol-1
     positions = ag.center_of_mass(compound="residues")
     dimensions = ag.universe.dimensions[:3]
     if range is None:
         range = (0.0, dimensions[d])
     bin_mass, edges = np.histogram(
-        positions[:, d],
-        weights=masses,
-        bins=n_bins,
-        range=range
+        positions[:, d], weights=masses, bins=n_bins, range=range
     )
     dimensions[d] = range[1] - range[0]
     volume = np.prod(dimensions) * ureg("Å^3")
     slice_volume = volume / n_bins
     bin_mass = bin_mass * ureg("g/mol")
-    densities = (bin_mass / slice_volume)
+    densities = bin_mass / slice_volume
     densities = densities / ureg("N_A")
     return densities.to("g/cm^3").magnitude, edges
 
@@ -61,11 +59,9 @@ def get_mass_density(ag, n_bins, range=None, dim="z"):
 def get_owe_composition(ag_all, ag_oct, ag_sol, ag_eth, n_bins, range=None, dim="z"):
     """
     Calculates OWE composition (wt %) across one dimension of the simulation box.
-    
+
     Parameters
     ----------
-    u : Universe
-        Universe to analyse.
     ag_all : AtomGroup
         AtomGroup of whole system.
     ag_oct : AtomGroup
@@ -143,7 +139,7 @@ class PhaseBehaviourThreshold(AnalysisBase):
     @classmethod
     def get_supported_backends(cls):
         return ("serial", "multiprocessing", "dask")
-    
+
     def __init__(
         self,
         u,
@@ -180,9 +176,9 @@ class PhaseBehaviourThreshold(AnalysisBase):
             self._ag_eth,
             self._n_bins,
             range=self._range,
-            dim=self._dim
+            dim=self._dim,
         )
-        
+
         self.results.edges[self._frame_index] = edges
         self.results.oct[self._frame_index] = oct
         self.results.sol[self._frame_index] = sol
@@ -191,10 +187,10 @@ class PhaseBehaviourThreshold(AnalysisBase):
     def _get_aggregator(self):
         return ResultsGroup(
             lookup={
-                "edges":ResultsGroup.ndarray_vstack,
-                "oct":ResultsGroup.ndarray_vstack,
-                "sol":ResultsGroup.ndarray_vstack,
-                "eth":ResultsGroup.ndarray_vstack,
+                "edges": ResultsGroup.ndarray_vstack,
+                "oct": ResultsGroup.ndarray_vstack,
+                "sol": ResultsGroup.ndarray_vstack,
+                "eth": ResultsGroup.ndarray_vstack,
             }
         )
 
@@ -259,7 +255,7 @@ class PhaseBehaviourKMeans(AnalysisBase):
     @classmethod
     def get_supported_backends(cls):
         return ("serial", "multiprocessing", "dask")
-    
+
     def __init__(
         self,
         u,
@@ -294,7 +290,7 @@ class PhaseBehaviourKMeans(AnalysisBase):
             self._ag_eth,
             self._n_bins,
             range=self._range,
-            dim=self._dim
+            dim=self._dim,
         )
 
         self.results.edges[self._frame_index] = edges
@@ -305,17 +301,25 @@ class PhaseBehaviourKMeans(AnalysisBase):
     def _get_aggregator(self):
         return ResultsGroup(
             lookup={
-                "edges":ResultsGroup.ndarray_vstack,
-                "oct":ResultsGroup.ndarray_vstack,
-                "sol":ResultsGroup.ndarray_vstack,
-                "eth":ResultsGroup.ndarray_vstack,
+                "edges": ResultsGroup.ndarray_vstack,
+                "oct": ResultsGroup.ndarray_vstack,
+                "sol": ResultsGroup.ndarray_vstack,
+                "eth": ResultsGroup.ndarray_vstack,
             }
         )
 
     def _conclude(self):
         # K-means clustering based on octanol and water composition
-        x = np.column_stack([self.results.oct.ravel(), self.results.sol.ravel(), self.results.eth.ravel()])
-        init_centres = np.array([[100, 0, 0], [0, 100, 0]]) # cluster 0 = octanol-rich, cluster 1 = water-rich
+        x = np.column_stack(
+            [
+                self.results.oct.ravel(),
+                self.results.sol.ravel(),
+                self.results.eth.ravel(),
+            ]
+        )
+        init_centres = np.array(
+            [[100, 0, 0], [0, 100, 0]]
+        )  # cluster 0 = octanol-rich, cluster 1 = water-rich
         km = KMeans(n_clusters=2, init=init_centres).fit(x)
 
         self.results.labels = km.labels_.reshape((self.n_frames, self._n_bins))
@@ -326,6 +330,8 @@ class PhaseBehaviourKMeans(AnalysisBase):
         if two_phases:
             oct_A, sol_A, eth_A = self.results.centers[0]
             oct_B, sol_B, eth_B = self.results.centers[1]
-            self.results.composition = np.array([oct_A, oct_B, sol_A, sol_B, eth_A, eth_B])
+            self.results.composition = np.array(
+                [oct_A, oct_B, sol_A, sol_B, eth_A, eth_B]
+            )
         else:
             self.results.composition = np.full(6, np.nan)

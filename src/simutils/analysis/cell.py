@@ -6,6 +6,16 @@ from MDAnalysis.transformations.base import TransformationBase
 
 
 class ContinousCellMatrix(TransformationBase):
+    """
+    Undo GROMACS cell corrections for proper averaging.
+
+    GROMACS may add or subtract box vectors if the simulation cell becomes too skewed.
+    This produces discontinuous jumps in the triclinic cell matrix between frames,
+    which prevents a proper time-average of the cell parameters. This transformation
+    compares each frame's cell matrix to the previous frame's and reverses any such
+    jump, giving a continuous cell matrix over the trajectory.
+    """
+
     def __init__(self, max_threads=None):
         super().__init__(max_threads=max_threads, parallelizable=False)
         self._H_prev = None
@@ -36,7 +46,7 @@ class CellParameters(AnalysisBase):
     Parameters
     ----------
     u : Universe
-        Universe for MSD analysis.
+        Universe for cell parameter analysis.
     tau_min : float, optional
         Start time for averaging in ps (default = first frame time).
     tau_max : float, optional
@@ -69,7 +79,9 @@ class CellParameters(AnalysisBase):
     def _conclude(self):
         self.results.cell_parameters = np.zeros((self.n_frames, 6))
         for i in range(self.n_frames):
-            self.results.cell_parameters[i] = calculate_cell_parameters(self.results.cell_matrices[i])
+            self.results.cell_parameters[i] = calculate_cell_parameters(
+                self.results.cell_matrices[i]
+            )
 
         times = self.times
 
@@ -81,7 +93,9 @@ class CellParameters(AnalysisBase):
         mask = (times >= self._t_min) & (times <= self._t_max)
 
         self.results.avg_cell_matrix = self.results.cell_matrices[mask].mean(axis=0)
-        self.results.avg_cell_parameters = calculate_cell_parameters(self.results.avg_cell_matrix)
+        self.results.avg_cell_parameters = calculate_cell_parameters(
+            self.results.avg_cell_matrix
+        )
 
 
 def calculate_cell_parameters(H):
@@ -92,7 +106,7 @@ def calculate_cell_parameters(H):
     ----------
     H : ndarray
         3x3 cell matrix, rows correspond to box vectors a, b, c. H[1, 0] = b_x.
-        
+
     Returns
     -------
     cell_parameters : ndarray
@@ -103,7 +117,7 @@ def calculate_cell_parameters(H):
     b = np.linalg.norm(b_vec)
     c = np.linalg.norm(c_vec)
     alpha = np.degrees(np.arccos(np.dot(b_vec, c_vec) / (b * c)))
-    beta  = np.degrees(np.arccos(np.dot(a_vec, c_vec) / (a * c)))
+    beta = np.degrees(np.arccos(np.dot(a_vec, c_vec) / (a * c)))
     gamma = np.degrees(np.arccos(np.dot(a_vec, b_vec) / (a * b)))
     return np.array([a, b, c, alpha, beta, gamma])
 
@@ -116,7 +130,7 @@ def box_volume(H):
     ----------
     H : ndarray
         3x3 cell matrix, rows correspond to box vectors a, b, c. H[1, 0] = b_x.
-        
+
     Returns
     -------
     box_volume : float
