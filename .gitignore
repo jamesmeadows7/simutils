@@ -3,3 +3,6 @@ __pycache__/
 
 # packaging
 *.egg-info/
+
+# uv-managed virtual environment
+.venv/

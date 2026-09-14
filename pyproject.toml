@@ -5,6 +5,13 @@ build-backend = "hatchling.build"
 [project]
 name = "simutils"
 version = "0.1.0"
+description = "Utilities for setting up and analysing molecular dynamics simulations, including MDAnalysis-based analysis tools."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "jamesmeadows7", email = "james.w.meadows@durham.ac.uk" }
+]
+keywords = ["molecular-dynamics", "MDAnalysis", "computational-chemistry", "GROMACS"]
 dependencies = [
     "cycler>=0.12.1",
     "matplotlib>=3.10.8",
