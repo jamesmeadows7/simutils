@@ -1,4 +1,4 @@
-"""Tools for setting up coarse-grained simulations of ocanol/water/ethanol mixtures."""
+"""Tools for setting up coarse-grained simulations of octanol/water/ethanol mixtures."""
 
 import subprocess, re, logging, shutil
 import numpy as np

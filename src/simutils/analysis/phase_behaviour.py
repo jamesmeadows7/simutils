@@ -1,4 +1,4 @@
-"Tools fot identifying different phases of the OWE ternary system."
+"""Tools for identifying different phases of the OWE ternary system."""
 
 import numpy as np
 from simutils import ureg

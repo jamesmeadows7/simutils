@@ -1,4 +1,4 @@
-"""Tools fot identifying molecular clusters."""
+"""Tools for identifying molecular clusters."""
 
 import numpy as np
 import string

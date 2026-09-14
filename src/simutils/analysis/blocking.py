@@ -63,7 +63,6 @@ def optimal_block(blocking_df: pd.DataFrame) -> tuple[float, float]:
     block_size = n / blocking_df["N"]
     # compute optimal block size according to 10.1103/PhysRevE.83.066706
     opt_block_size = (2*n*(blocking_df["sem"]/blocking_df["sem"].loc[0])**4)**(1/3)
-    print(opt_block_size)
     # find smallest B that is less than B_opt (this assumes opt_block_size is monotonic in the forward direction)
     opt_idx = (block_size > opt_block_size).idxmax()
     # check optimal B < n / 50
