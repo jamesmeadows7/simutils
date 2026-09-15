@@ -4,9 +4,9 @@ A personal library of molecular dynamics simulation analysis and setup tools, bu
 
 Most of the analysis code is built on top of the `Analysis Base` class provided by [MDAnalysis](https://www.mdanalysis.org/), incorporating additional libraries from the scientific Python ecosystem such as NumPy, SciPy, Pint and NetworkX.
 
-## Analysis (`src/simutils/analysis/`)
+## Analysis ([`src/simutils/analysis/`](src/simutils/analysis/))
 
-### `ClusterAnalysis` — Molecular Cluster Detection and Structure
+### [`ClusterAnalysis`](src/simutils/analysis/clustering.py) — Molecular Cluster Detection and Structure
 
 Molecular clustering, based on a centre of mass distance cutoff, using `self_capped_distance` from MDAnalysis and `networkx` to derive a graph of connected components.
 `ClusterAnalysis` computes per-frame cluster size statistics and the cluster size distribution over a trajectory.
@@ -23,7 +23,7 @@ clusters.results.avg_clust   # average cluster size per frame
 clusters.results.size_dist   # average cluster size distribution
 ```
 
-### `MSD` — Mean Squared Displacement by Centre of Mass
+### [`MSD`](src/simutils/analysis/msd.py) — Mean Squared Displacement by Centre of Mass
 
 MDAnalysis's `EinsteinMSD` adapted to operate on residue centres of mass rather than individual atoms.
 Applies the `NoJump` transformation before processing to unwrap the trajectory such that atoms never move more than half a periodic box length.
@@ -39,7 +39,7 @@ msd.results.timeseries  # molecule-averaged MSD vs lag-time
 msd.compute_diff_coefficent(tau_min=100, tau_max=1000)  # diffusion coefficient, Å²/ps
 ```
 
-### `RDF` — Radial Distribution Function by Centre of Mass
+### [`RDF`](src/simutils/analysis/rdf.py) — Radial Distribution Function by Centre of Mass
 
 MDAnalysis's `InterRDF` adapted to compute the RDF between two groups using residue centres of mass rather than the positions of individual atoms.
 Supports MDAnalysis's parallel analysis backends.
@@ -54,7 +54,7 @@ rdf.results.bins  # bin centres, Å
 rdf.results.rdf   # g(r)
 ```
 
-### `ContinousCellMatrix` and `CellParameters` — GROMACS Triclinic Cell Handling
+### [`ContinousCellMatrix` and `CellParameters`](src/simutils/analysis/cell.py) — GROMACS Triclinic Cell Handling
 
 `ContinousCellMatrix` is a trajectory transformation, built using `TransformationBase`, that undoes GROMACS's corrections to an overly-skewed triclinic cell, reversing discontinuous jumps in the cell matrix by comparing each frame to the previous one. `CellParameters` then properly time-averages cell lengths and angles from the continuous trajectory.
 
@@ -68,7 +68,7 @@ cell.run()
 cell.results.avg_cell_parameters  # a, b, c, alpha, beta, gamma
 ```
 
-### Extending `HydrogenBondAnalysis`
+### Extending [`HydrogenBondAnalysis`](src/simutils/analysis/hydrogenbonds.py)
 
 Additional method `count_by_time_and_type` for MDAnalysis's `HydrogenBondAnalysis`.
 Combines existing `count_by_time` and `count_by_type` methods into a single per-frame, per-type breakdown.
@@ -85,21 +85,21 @@ hbonds.count_by_time_and_type(norm="n_residues")
 
 ### Other Analysis Modules
 
-- **`symmetry.py`** (`Symmetry`) — per-frame space-group detection via [spglib](https://spglib.readthedocs.io/), used alongside the `ContinousCellMatrix` transformation.
-- **`viscosity.py`** — Green–Kubo viscosity from a GROMACS pressure tensor (`.edr`, via `panedr`), computed using [best practices](https://livecomsjournal.org/index.php/livecoms/article/view/v1i1e6324).
-- **`blocking.py`** (`blocking_analysis`, `optimal_block`) — Flyvbjerg–Petersen block-averaging for automatic estimation of the statistical uncertainty of a correlated timeseries.
-- **`phase_behaviour.py`** (`PhaseBehaviourThreshold`, `PhaseBehaviourKMeans`) — assigns octanol-rich/water-rich phases from mass density profiles (threshold or K-means), for a project-specific octanol/water/ethanol system.
+- **[`symmetry.py`](src/simutils/analysis/symmetry.py)** (`Symmetry`) — per-frame space-group detection via [spglib](https://spglib.readthedocs.io/), used alongside the `ContinousCellMatrix` transformation.
+- **[`viscosity.py`](src/simutils/analysis/viscosity.py)** — Green–Kubo viscosity from a GROMACS pressure tensor (`.edr`, via `panedr`), computed using [best practices](https://livecomsjournal.org/index.php/livecoms/article/view/v1i1e6324).
+- **[`blocking.py`](src/simutils/analysis/blocking.py)** (`blocking_analysis`, `optimal_block`) — Flyvbjerg–Petersen block-averaging for automatic estimation of the statistical uncertainty of a correlated timeseries.
+- **[`phase_behaviour.py`](src/simutils/analysis/phase_behaviour.py)** (`PhaseBehaviourThreshold`, `PhaseBehaviourKMeans`) — assigns octanol-rich/water-rich phases from mass density profiles (threshold or K-means), for a project-specific octanol/water/ethanol system.
 
-## Setup (`src/simutils/setup/`)
+## Setup ([`src/simutils/setup/`](src/simutils/setup/))
 
-GROMACS setup scripts for the octanol/water/ethanol/glycine project, calling the `gmx` binary.
+GROMACS setup scripts for a system of octanol, water, ethanol and glycine, calling the `gmx` binary.
 
-- **`owe.py`** / **`owe2.py`** — atomistic system setup, for two glycine force-field variants.
-- **`martini.py`** — coarse-grained system setup.
-- **`cgf.py`** — shared force-field/polymorph/temperature constants.
-- **`utils.py`** — template file generation and `gmx` subprocess helper functions.
+- **[`owe.py`](src/simutils/setup/owe.py)** / **[`owe2.py`](src/simutils/setup/owe2.py)** — atomistic system setup, for two glycine force-field variants.
+- **[`martini.py`](src/simutils/setup/martini.py)** — coarse-grained system setup.
+- **[`cgf.py`](src/simutils/setup/cgf.py)** — shared force-field/polymorph/temperature constants.
+- **[`utils.py`](src/simutils/setup/utils.py)** — template file generation and `gmx` subprocess helper functions.
 
-## Plotting (`src/simutils/plotting/`)
+## Plotting ([`src/simutils/plotting/`](src/simutils/plotting/))
 
-- **`config.py`** (`set_plot_style`) — set a consistent matplotlib style, and a display-label lookup dictionary for force field names.
-- **`timeseries.py`** (`plot_timeseries`, `plot_blocking_analysis`) — plotting helpers for timeseries (showing mean and SEM) and for a blocking analysis.
+- **[`config.py`](src/simutils/plotting/config.py)** (`set_plot_style`) — set a consistent matplotlib style, and a display-label lookup dictionary for force field names.
+- **[`timeseries.py`](src/simutils/plotting/timeseries.py)** (`plot_timeseries`, `plot_blocking_analysis`) — plotting helpers for timeseries (showing mean and SEM) and for a blocking analysis.
