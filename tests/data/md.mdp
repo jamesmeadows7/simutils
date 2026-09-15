@@ -1,0 +1,51 @@
+; Run Control
+integrator = sd
+nsteps = 7500000 ; 7.5 ns
+dt = 0.001 ; ps
+comm-mode = Angular
+nstcomm = 1
+
+; Langevin Dynamics
+ld-seed = -1
+
+; Output Control
+nstxout = 1000
+nstvout = 1000
+nstfout = 1000
+nstlog = 1000
+nstcalcenergy = 1
+nstenergy = 100
+
+; Neighbour Searching
+cutoff-scheme = Verlet
+nstlist = 100
+pbc = xyz
+
+; Electrostatics
+coulombtype = Cut-off
+coulomb-modifier = None
+rcoulomb = 1.0 ; nm
+
+; Van der Waals
+vdwtype = Cut-off
+vdw-modifier = None
+rvdw = 1.0 ; nm
+DispCorr = no
+
+; Temperature Coupling
+tcoupl = no
+nsttcouple = 1
+tc-grps = System
+tau-t = 2.0 ; ps
+ref-t = ${temp} ; K
+
+; Pressure Coupling
+pcoupl = no
+
+; Velocity Generation
+gen-vel = yes
+gen-temp = ${temp} ; K
+gen-seed = -1
+
+; Bonds
+constraints = none
